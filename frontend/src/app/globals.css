@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 25% 98%;
+    --foreground: 211 40% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 211 40% 14%;
+    --primary: 211 52% 21%;           /* navy #1a3550 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 183 30% 94%;
+    --secondary-foreground: 211 52% 21%;
+    --muted: 210 20% 95%;
+    --muted-foreground: 213 15% 40%;
+    --accent: 183 68% 32%;            /* teal #1a8a8f */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 212 20% 88%;
+    --input: 212 20% 82%;
+    --ring: 183 68% 32%;
+    --navy: 211 52% 21%;
+    --teal: 183 68% 32%;
+    --success: 152 60% 30%;
+    --warning: 35 90% 40%;
+    --radius: 0.6rem;
+  }
+  .dark, :root[data-theme="dark"] {
+    --background: 211 40% 9%;
+    --foreground: 210 25% 94%;
+    --card: 211 38% 12%;
+    --card-foreground: 210 25% 94%;
+    --primary: 183 55% 45%;
+    --primary-foreground: 211 40% 9%;
+    --secondary: 211 30% 17%;
+    --secondary-foreground: 210 25% 94%;
+    --muted: 211 30% 16%;
+    --muted-foreground: 211 15% 68%;
+    --accent: 183 55% 40%;
+    --accent-foreground: 0 0% 100%;
+    --border: 211 25% 22%;
+    --input: 211 25% 28%;
+    --ring: 183 55% 45%;
+    --navy: 210 25% 94%;
+    --teal: 183 55% 55%;
+    --success: 152 55% 55%;
+    --warning: 38 90% 60%;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --background: 211 40% 9%;
+      --foreground: 210 25% 94%;
+      --card: 211 38% 12%;
+      --card-foreground: 210 25% 94%;
+      --primary: 183 55% 45%;
+      --primary-foreground: 211 40% 9%;
+      --secondary: 211 30% 17%;
+      --secondary-foreground: 210 25% 94%;
+      --muted: 211 30% 16%;
+      --muted-foreground: 211 15% 68%;
+      --accent: 183 55% 40%;
+      --accent-foreground: 0 0% 100%;
+      --border: 211 25% 22%;
+      --input: 211 25% 28%;
+      --ring: 183 55% 45%;
+      --navy: 210 25% 94%;
+      --teal: 183 55% 55%;
+      --success: 152 55% 55%;
+      --warning: 38 90% 60%;
+    }
+  }
+  * { @apply border-border; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-background text-foreground antialiased; }
+  h1, h2, h3 { @apply tracking-tight text-navy; }
+  :focus-visible { @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background; }
+}

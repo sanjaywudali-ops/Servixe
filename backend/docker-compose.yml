@@ -1,0 +1,46 @@
+# Local development stack: PostgreSQL + Redis + API + Celery worker/beat.
+# For staging/production use managed PostgreSQL/Redis, a secrets manager and ECS/Fargate (see README).
+services:
+  db:
+    image: postgres:16
+    environment: { POSTGRES_USER: servixe, POSTGRES_PASSWORD: servixe, POSTGRES_DB: servixe }
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U servixe"], interval: 5s, retries: 10 }
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+  migrate:
+    build: .
+    env_file: .env
+    environment: { DATABASE_URL: "postgresql+psycopg://servixe:servixe@db:5432/servixe" }
+    command: sh -c "alembic upgrade head && python -m scripts.seed"
+    depends_on: { db: { condition: service_healthy } }
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: "postgresql+psycopg://servixe:servixe@db:5432/servixe"
+      REDIS_URL: "redis://redis:6379/0"
+      CELERY_EAGER: "false"
+    ports: ["8000:8000"]
+    depends_on: { migrate: { condition: service_completed_successfully }, redis: { condition: service_started } }
+    volumes: [storage:/srv/.storage]
+  worker:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: "postgresql+psycopg://servixe:servixe@db:5432/servixe"
+      REDIS_URL: "redis://redis:6379/0"
+      CELERY_EAGER: "false"
+    command: celery -A app.worker.celery_app worker -l info
+    depends_on: [api]
+  beat:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: "postgresql+psycopg://servixe:servixe@db:5432/servixe"
+      REDIS_URL: "redis://redis:6379/0"
+    command: celery -A app.worker.celery_app beat -l info
+    depends_on: [api]
+volumes: { pgdata: {}, storage: {} }

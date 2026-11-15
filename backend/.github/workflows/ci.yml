@@ -1,0 +1,17 @@
+name: backend-ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13", cache: pip }
+      - run: pip install -r requirements-dev.txt ruff pip-audit
+      - run: ruff check app --select E9,F63,F7,F82
+      - run: pip-audit -r requirements.txt
+      - run: pytest -q
+      - name: Migration check
+        run: |
+          DATABASE_URL=sqlite:///./ci.db alembic upgrade head
+          DATABASE_URL=sqlite:///./ci.db alembic check
